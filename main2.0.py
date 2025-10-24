@@ -6,11 +6,19 @@ import os
 #Funções de procura
 def encontraruser():
     if os.path.exists('users.json'):
-        with ('users.json', 'r') as usuarios:
+        with open('users.json', 'r') as usuarios:
             users = json.load(usuarios)
     else:
         users = []
     return users
+
+def escritauser(user):
+    dici = encontraruser()
+    users = dici["users"]
+    print(users)
+    users.append(user)
+    with open('users.json', 'w') as usus:
+        json.dump(dici, usus, indent=2)
 
 
 def econtrarcamp():
@@ -28,8 +36,9 @@ def p():
     rápido ao menu, para economizar mais tempo
     e deixar mais organizado o código fonte.
     """
-    a =input('Dê enter para voltar ao menu principal\n\n')
-    menuprincipal()
+    a =input('\nDê enter para voltar ao menu principal\n\n')
+
+
 
 
 def sub01():
@@ -40,7 +49,7 @@ def sub01():
     """
     m = input('\nBem vindo ao submenu 1\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
     if m.upper() == 'SAIR':
-        menuprincipal()
+        pass
     else:
         users = encontraruser()
         while True:
@@ -52,16 +61,29 @@ def sub01():
             posicao = input('Diga a posição da jogadora\nEX: (Zagueira)')
             b = input('Tem certeza que os dados estão corretos?\nCaso não, digita "Recomeçar" para reiniciar os dados a serem colocados\nCaso sim, apenas dê enter\n')
             if not b.upper() == 'RECOMEÇAR':
+                existe = False
                 while True:
-                    usuarios = users['users']
-                    regis = str(random.randint(100000000,999999999))
-                    regis = '123456789'
+                    usuarios = users["users"]
+                    regis = str(random.randint(100000,999999))
                     for i in usuarios:
                         if i["RM"] == regis:
-                            x = 1
-                    if x == 1:
+                            existe = True
+                    if not existe:
                         print('Você vai morrer')
                         break
+                usuaria = {"nome": nome,
+                  "data_nascimento": data,
+                  "dia_entrada": entrada,
+                  "RM": regis,
+                  "time": time,
+                  "numero_camisa": numero,
+                  "posicao": posicao
+                }
+                print(usuaria)
+                escritauser(usuaria)
+            p()
+            break
+
                         
                     
 
@@ -75,65 +97,124 @@ def sub02():
     """
     m = input('\nBem vindo ao submenu 2\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
     if m.upper() == 'SAIR':
-        menuprincipal()
+        pass
     else:
-        users = encontraruser()
-        for i in users.items():
-            print(i)
+        dici = encontraruser()
+        users = dici["users"]
+        for i in users:
+            print(f"Nome: {i["nome"]}\nRM:{i["RM"]}\nData de Nascimento: {i["data_nascimento"]}\nDia de entrada: {i["dia_entrada"]}\nTime: {i["time"]}\nNúmero: {i["numero_camisa"]}\nPosição: {i["posicao"]}")
+            print("\n###################################################\n")
         p()
 
-# def sub03():
-#     """
-#     Leitura de uma usuária em especifico
-#     """
-#     m = input('\nBem vindo ao submenu 3\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
-#     if m.upper() == 'SAIR':
-#         menuprincipal()
-#     else:
-#         users = encontraruser()
-#         a = int(input('\nDiga o resgitro da usuária\n'))
-#         if a in users.keys():
-#             print(users[a])
-#             p()
-#         else:
-#             print('\nA usuária não se encontra no registro.\n')
-#             p()
 
-# def sub04():
-#     """
-#     Alteração de dados de uma usuária em específico
-#     no caso de erros no cadastro
-#     """
-#     m = input('\nBem vindo ao submenu 4\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
-#     if m.upper() == 'SAIR':
-#         menuprincipal()
-#     else:
-#         a = int(input('Diga o número de registro da usuária\n'))
-#         if a in users.keys():
-#             b = input('Diga que dado deseja alterar (Nome, Data, Altura, Peso)\nEx:Altura / ALTURA / altura\nCaso não colocar nenhum dos tipos de dados citados ou escrever algo errado, consideraremos que não quer trocar nada e irá voltar ao menu principal\n')
+def sub03():
+    """
+    Leitura de uma usuária em especifico
+    """
+    m = input('\nBem vindo ao submenu 3\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
+    if m.upper() == 'SAIR':
+        menuprincipal()
+    else:
+        dici = encontraruser()
+        users = dici["users"]
+        a = input('\nDiga o resgitro da usuária\n')
+        exis = False
+        for i in  users:
+            if i["RM"]==a:
+                print(f"Nome: {i["nome"]}\nRM:{i["RM"]}\nData de Nascimento: {i["data_nascimento"]}\nDia de entrada: {i["dia_entrada"]}\nTime: {i["time"]}\nNúmero: {i["numero_camisa"]}\nPosição: {i["posicao"]}")
+                exis = True
+        if not exis:
+            print('\nA usuária não se encontra no registro.\n')
+        p()
 
-#             if b.upper() == 'NOME':
-#                 nome = input(f'Digite o nome que deseja colocar no lugar (Nome anterior: {(users.get(a)).get('Nome:')})\n')
-#                 users[a].update({'Nome:': nome})
+def sub04():
+    """
+    Alteração de dados de uma usuária em específico
+    no caso de erros no cadastro
+    """
+    m = input('\nBem vindo ao submenu 4\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
+    if m.upper() == 'SAIR':
+        pass
+    else:
+        dici = encontraruser()
+        users = dici["users"]
+        existe = False
+        a = input('Diga o número de registro (RM) da usuária\n')
+        for i in  users:
+            if a==i["RM"]:
+                existe = True
+                user = i
+                break
+        if existe:
+            anterior = user
+            b = input('Diga que dado deseja alterar \n(Números correspondentes aos dados: \n1 - Nome\n2 - Data de nascimento\n3 - Data de entrada\n4 - Time\n5 - Numero\n6 - Posição\nExemplos: Se o número de entrada for 1, você irá mudar o nome do user, se for 4, você irá mudar o time do user\nCaso não colocar nenhum dos tipos de dados citados ou escrever algo errado, consideraremos que não quer trocar nada e irá voltar ao menu principal\n')
 
-#             elif b.upper() == 'DATA':
-#                 data = input(f'Diga a data de nascimento que deseja modificar como dd/mm/aaa (Data anterior: {(users.get(a)).get('Data:')})\n')
-#                 users[a].update({'Data:': data})
+            if b=="1":
+                print(f"Nome atual: {user["nome"]}")
+                c = input("Que nome novo deseja colocar no lugar?")
+                user["nome"]=c
+                print(f'Nome atualizado para {c}')
+                dici["users"].remove(anterior)
+                dici["users"].append(user)
+                with open('users.json', 'w') as usus:
+                    json.dump(dici, usus, indent=2)
 
-#             elif b.upper() == 'ALTURA':
-#                 alt = float(input(f'Digite aqui qual valor você quer colocar no lugar da altura antertior ({(users.get(a)).get('Altura:')}m²)\n'))
-#                 users[a].update({'Altura:': alt})
+            elif b == "2":
+                print(f"Nome atual: {user["data_nascimento"]}")
+                c = input("Que data de nascimento novo deseja colocar no lugar?\n(Em formato AAAA-MM-DD\nEx: 2000-01-17)")
+                user["data_nascimento"] = c
+                print(f'Data de nascimento atualizada para {c}')
+                dici["users"].remove(anterior)
+                dici["users"].append(user)
+                with open('users.json', 'w') as usus:
+                    json.dump(dici, usus, indent=2)
 
-#             elif b.upper() == 'PESO':
-#                 peso = float(input(f'Digite aqui qual valor você quer colocar no lugar do peso antertior ({(users.get(a)).get('Peso:')}kg)\n'))
-#                 users[a].update({'Peso:': peso})
-#             else:
-#                 p()
-#             print(users[a])
-#             p()
-#         else:
-#             print('Este número de registro não está na listagem, tem certeza que essa pessoa existe?\nSe sim, tente volte ao menu principal, use a opção 3 e coloque o número de registro para ver se esse usuário realmente existe')
-#             p()
+            elif b == "3":
+                print(f"Nome atual: {user["dia_entrada"]}")
+                c = input("Que data de entrada nova deseja colocar no lugar?\n(Em formato AAAA-MM-DD\nEx: 2025-10-24)")
+                user["dia_entrada"] = c
+                print(f'Data de entrada atualizada para {c}')
+                dici["users"].remove(anterior)
+                dici["users"].append(user)
+                with open('users.json', 'w') as usus:
+                    json.dump(dici, usus, indent=2)
+
+            elif b == "4":
+                print(f"Nome atual: {user["time"]}")
+                c = input("Que time novo deseja colocar no lugar?")
+                user["time"] = c
+                print(f'Time atualizado para {c}')
+                dici["users"].remove(anterior)
+                dici["users"].append(user)
+                with open('users.json', 'w') as usus:
+                    json.dump(dici, usus, indent=2)
+
+            elif b == "5":
+                print(f"Nome atual: {user["numero_camisa"]}")
+                c = input("Que número de camisa novo deseja colocar no lugar?")
+                user["numero_camisa"] = c
+                print(f'Numero de camisa atualizado para {c}')
+                dici["users"].remove(anterior)
+                dici["users"].append(user)
+                with open('users.json', 'w') as usus:
+                    json.dump(dici, usus, indent=2)
+
+            elif b == "6":
+                print(f"Nome atual: {user["posicao"]}")
+                c = input("Que posição nova deseja colocar no lugar?")
+                user["posicao"] = c
+                print(f'Posição atualizada para {c}')
+                dici["users"].remove(anterior)
+                dici["users"].append(user)
+                with open('users.json', 'w') as usus:
+                    json.dump(dici, usus, indent=2)
+
+            else:
+                p()
+
+        else:
+            print('Este número de registro não está na listagem, tem certeza que essa pessoa existe?\nSe sim, use a opção 3 do menu principal e coloque o número de registro para ver se esse usuário realmente existe')
+            p()
 
 # def sub05():
 #     """
@@ -347,12 +428,12 @@ def menuprincipal():
         a = int(input('Digite o número do submenu que deseja acessar\n\n'))
         if a==1:
             sub01()
-#         elif a==2:
-#             sub02()
-#         elif a == 3:
-#             sub03()
-#         elif a == 4:
-#             sub04()
+        elif a==2:
+            sub02()
+        elif a == 3:
+            sub03()
+        elif a == 4:
+            sub04()
 #         elif a == 5:
 #             sub05()
 #         elif a == 6:
