@@ -6,7 +6,7 @@
       "dia_entrada": "2020-01-15",
       "RM": "123456789",
       "time": "Orlando Pride",
-      "numero_camisa": 10,
+      "numero_camisa": "10",
       "posicao": "Atacante"
     },
     {
@@ -15,7 +15,7 @@
       "dia_entrada": "2021-03-10",
       "RM": "987654321",
       "time": "Kansas City Current",
-      "numero_camisa": 7,
+      "numero_camisa": "7",
       "posicao": "Atacante"
     },
     {
@@ -24,7 +24,7 @@
       "dia_entrada": "2022-01-20",
       "RM": "456789123",
       "time": "Corinthians",
-      "numero_camisa": 6,
+      "numero_camisa": "6",
       "posicao": "Zagueira"
     },
     {
@@ -33,7 +33,7 @@
       "dia_entrada": "2020-07-05",
       "RM": "321654987",
       "time": "Corinthians",
-      "numero_camisa": 13,
+      "numero_camisa": "13",
       "posicao": "Lateral"
     },
     {
@@ -42,7 +42,7 @@
       "dia_entrada": "2021-08-15",
       "RM": "789123456",
       "time": "São Paulo",
-      "numero_camisa": 11,
+      "numero_camisa": "11",
       "posicao": "Atacante"
     }
   ]
