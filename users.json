@@ -4,7 +4,7 @@
       "nome": "Marta Vieira da Silva",
       "data_nascimento": "1986-02-19",
       "dia_entrada": "2020-01-15",
-      "RM": "123456789",
+      "RM": "123456",
       "time": "Orlando Pride",
       "numero_camisa": "10",
       "posicao": "Atacante"
@@ -13,7 +13,7 @@
       "nome": "Debinha",
       "data_nascimento": "1991-03-20",
       "dia_entrada": "2021-03-10",
-      "RM": "987654321",
+      "RM": "987654",
       "time": "Kansas City Current",
       "numero_camisa": "7",
       "posicao": "Atacante"
@@ -22,7 +22,7 @@
       "nome": "Letícia Santos",
       "data_nascimento": "1994-12-13",
       "dia_entrada": "2022-01-20",
-      "RM": "456789123",
+      "RM": "456789",
       "time": "Corinthians",
       "numero_camisa": "6",
       "posicao": "Zagueira"
@@ -31,7 +31,7 @@
       "nome": "Tamires Cássia",
       "data_nascimento": "1987-10-10",
       "dia_entrada": "2020-07-05",
-      "RM": "321654987",
+      "RM": "321654",
       "time": "Corinthians",
       "numero_camisa": "13",
       "posicao": "Lateral"
@@ -40,7 +40,7 @@
       "nome": "Ludmila da Silva",
       "data_nascimento": "1994-01-11",
       "dia_entrada": "2021-08-15",
-      "RM": "789123456",
+      "RM": "789123",
       "time": "São Paulo",
       "numero_camisa": "11",
       "posicao": "Atacante"
