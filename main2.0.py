@@ -1,4 +1,5 @@
 import random
+from datetime import date
 import json
 import os
 
@@ -28,6 +29,15 @@ def econtrarcamp():
     else:
         campeonatos = []
     return campeonatos
+
+def escritacamp(camp):
+    dici = econtrarcamp()
+    camps = dici["campeonatos"]
+    print(camps)
+    camps.append(camp)
+    with open('users.json', 'w') as campus:
+        json.dump(dici, campus, indent=2)
+
 
 
 def p():
@@ -160,7 +170,7 @@ def sub04():
                     json.dump(dici, usus, indent=2)
 
             elif b == "2":
-                print(f"Nome atual: {user["data_nascimento"]}")
+                print(f"Data de nascimento atual: {user["data_nascimento"]}")
                 c = input("Que data de nascimento novo deseja colocar no lugar?\n(Em formato AAAA-MM-DD\nEx: 2000-01-17)")
                 user["data_nascimento"] = c
                 print(f'Data de nascimento atualizada para {c}')
@@ -170,7 +180,7 @@ def sub04():
                     json.dump(dici, usus, indent=2)
 
             elif b == "3":
-                print(f"Nome atual: {user["dia_entrada"]}")
+                print(f"Data de entrada atual: {user["dia_entrada"]}")
                 c = input("Que data de entrada nova deseja colocar no lugar?\n(Em formato AAAA-MM-DD\nEx: 2025-10-24)")
                 user["dia_entrada"] = c
                 print(f'Data de entrada atualizada para {c}')
@@ -180,7 +190,7 @@ def sub04():
                     json.dump(dici, usus, indent=2)
 
             elif b == "4":
-                print(f"Nome atual: {user["time"]}")
+                print(f"Time atual: {user["time"]}")
                 c = input("Que time novo deseja colocar no lugar?")
                 user["time"] = c
                 print(f'Time atualizado para {c}')
@@ -190,7 +200,7 @@ def sub04():
                     json.dump(dici, usus, indent=2)
 
             elif b == "5":
-                print(f"Nome atual: {user["numero_camisa"]}")
+                print(f"Camisa atual: {user["numero_camisa"]}")
                 c = input("Que número de camisa novo deseja colocar no lugar?")
                 user["numero_camisa"] = c
                 print(f'Numero de camisa atualizado para {c}')
@@ -200,7 +210,7 @@ def sub04():
                     json.dump(dici, usus, indent=2)
 
             elif b == "6":
-                print(f"Nome atual: {user["posicao"]}")
+                print(f"Posição atual: {user["posicao"]}")
                 c = input("Que posição nova deseja colocar no lugar?")
                 user["posicao"] = c
                 print(f'Posição atualizada para {c}')
@@ -216,59 +226,28 @@ def sub04():
             print('Este número de registro não está na listagem, tem certeza que essa pessoa existe?\nSe sim, use a opção 3 do menu principal e coloque o número de registro para ver se esse usuário realmente existe')
             p()
 
-# def sub05():
-#     """
-#     Cadastro de cameponato
-#     recebe uma identidade prórpia
-#     pode ser número ou títulos
-#     """
-#     m = input(
-#         '\nBem vindo ao submenu 5\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
-#     if m.upper() == 'SAIR':
-#         menuprincipal()
-#     else:
-#         a = input('Digite qual a identificação do campeonato')
-#         if not a in campeonatos.keys():
-#             vencedor = 'Indefinido'
-#             gol1 = 0
-#             gol2 = 0
-#             nome = input('Diga o nome do campeonato a ser cadastrado\n')
-#             data = input('Diga a data de nascimento da usuária em formato DD/MM/AAAA\n')
-#             hora = input('Diga o horário do campeonato em formato HH:MM\n(Exemplo: 17:52)\n')
-#             time1 = input('Diga o nome do primeiro time\n')
-#             time2 = input('Diga o nome do segundo time\n')
-#             estado = input('Digite 1 caso o campeonato já está terminado\nDigite 2 caso o campeonato ainda está em aguardo\nDigite 3 caso o campeonato irá acontecer hoje\n')
-#             if estado == '1':
-#                 estado = 'Terminado'
-#                 gol1 = int(input('Digite quantos gols o primeiro time fez\n'))
-#                 gol2 = int(input('Digite quantos gols o segundo time fez\n'))
-#                 if gol1 > gol2:
-#                     vencedor = time1
-#                 elif gol2 == gol1:
-#                     vencedor = 'Empate'
-#                 else:
-#                     vencedor = time2
-#             elif estado == '2':
-#                 estado = 'Em aguardo'
-#             elif estado == '3':
-#                 estado = 'Acontecerá hoje'
-#             else:
-#                 estado = 'Em aguardo'
-#                 print('Como não foi colocado nenhum valor tratável, foi colocado como "Em aguardo"\nCaso queira modificar isso, utilize o submenu 7 para modificar o estado do campeonato.')
-#             b = input(
-#                 'Tem certeza que os dados estão corretos?\nCaso não, digita "Recomeçar" para reiniciar os dados a serem colocados\nCaso sim, apenas dê enter\n')
-#             if not b.upper() == 'RECOMEÇAR':
-#                 if nome not in campeonatos.keys():
-#                     placar = f'{gol1}X{gol2}'
-#                     campeonatos[a] = {'Nome:': nome, 'Data:': data, 'Horário:': hora, 'Time1:': time1,'Time2:': time2,'Placar:':placar,'Vencedor:': vencedor, 'Estado:': estado}
-#                     print(campeonatos[a])
-#                     print(f'Identificação do campeonato: {a}\n')
-#                     p()
-#         else:
-#             print('Este campeonato já está registrado.')
-#             p()
+def sub05():
+    """
+    Cadastro de cameponato
+    recebe uma identidade prórpia
+    que pode ser apenas números
+    """
+    m = input(
+        '\nBem vindo ao submenu 4\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
+    if m.upper() == 'SAIR':
+        pass
+    else:
+        while True:
+            nome = input('Qual é o nome do campeonato?\n')
+            data1 = input('Digite a data do >>INICIO<< do campeonato em formato AAAA-MM-DD\nEx:: 2025-10-30\n')
+            try:
+                datatual = date.today()
+                if int(data1[-1:-2])>int(datatual[-1:-2]):
+                    estado = 'terminado'
+            except TypeError:
+                a = input('Erro: Você provavlmente colocou a data de inicio de maneira errada ou ')
 
-# #    'Campeonato Edição N01':{'Dia:':'19/09/2025','Horário:':'12:00','Time1:':'Time X1','Time2:':'Time Y1','Placar':'','Vencedor:':'','Estado':'Em aguardo'},
+
 
 
 
@@ -434,8 +413,8 @@ def menuprincipal():
             sub03()
         elif a == 4:
             sub04()
-#         elif a == 5:
-#             sub05()
+        elif a == 5:
+            sub05()
 #         elif a == 6:
 #             sub06()
 #         elif a == 7:
