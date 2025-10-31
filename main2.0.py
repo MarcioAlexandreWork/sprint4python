@@ -1,7 +1,10 @@
+import datetime
 import random
 from datetime import date
 import json
 import os
+
+from pyarrow import nulls
 
 
 #Funções de procura
@@ -31,11 +34,11 @@ def econtrarcamp():
     return campeonatos
 
 def escritacamp(camp):
-    dici = econtrarcamp()
+    dici = encontraruser()
     camps = dici["campeonatos"]
     print(camps)
     camps.append(camp)
-    with open('users.json', 'w') as campus:
+    with open('camps.json', 'w') as campus:
         json.dump(dici, campus, indent=2)
 
 
@@ -238,21 +241,86 @@ def sub05():
         pass
     else:
         while True:
+            dici = econtrarcamp()
             nome = input('Qual é o nome do campeonato?\n')
-            data1 = input('Digite a data do >>INICIO<< do campeonato em formato AAAA-MM-DD\nEx:: 2025-10-30\n')
+            data1 = input('Digite a data do >>INICIO<< do campeonato em formato AAAA-MM-DD\nEx: 2025-10-30\n')
+            data2 = input('Digite a data do >>FIM<< do campeonato em formato AAAA-MM-DD\nEx: 2025-10-31\n')
+            datatual = date.today()
             try:
-                datatual = date.today()
-                if int(data1[-1:-2])>int(datatual[-1:-2]):
-                    estado = 'terminado'
-            except TypeError:
-                a = input('Erro: Você provavlmente colocou a data de inicio de maneira errada ou ')
+                if int(data1[-2:-1]) and int(data1[-5:-4]) and int(data1[0:3]) >= int(datatual[-2:-1]) and int(datatual[-5:-4]) and int(datatual[0:3]):
+                    estado ='terminado'
+                else:
+                    estado = 'a ocorrer'
+            except ValueError:
+                print('Você provavelmente colocou algum valor na data final errado\nA data final será declarada como nula e o estado "a ocorrer", mude depois no submenu 7')
+                estado = 'a ocorrer'
+                data2 = None
+
+            if estado == 'terminado':
+                vencedor = input('Qual é o time vencedor?')
+                try:
+                    gol1 = int(input('Quantos gols o primeiro time fez?'))
+                    gol2 = int(input('Quantos gols o segundo time fez?'))
+                    arti = input('Qual é a artilheira?')
+                    golsart = int(input('Quantos gols a artilheira fez no total?'))
+                except ValueError:
+                    print('Erro: Valores não inteiros colocados, consideraremos o nome da artilheira, gols da artilheira, gols do primeiro, segundo time como nulos.\nMude isso no submenu 7 depois, ou reinicie o cadastro de campeonato depois')
+                    gol1 = None
+                    gol2 = None
+                    golsart = None
+                    arti= None
+            else:
+                vencedor = None
+                gol1 = None
+                gol2 = None
+                arti = 'Tem alguma artilheira definida?\nSe não, deixe esse espaço vazio e apenas dê enter\n'
+                if arti=='':
+                    golsart = None
+                    arti = None
+                else:
+                    try:
+                        golsart = int(input('Quantos gols a artilheira fez?'))
+                    except ValueError:
+                        print('Erro: Você não colocou um número inteiro, iremos considerar o valo como nulo, mude isso depois no subemenu 7')
+                        golsart = None
+                times = []
+                while True:
+                    time = input('Quais são os timpes participantes?\nDIGITE "SAIR" QUANTO NÃO TIVER MAIS TIMES PARA ADICIONAR\n')
+                    if time.upper()=='SAIR':
+                        break
+                    times.append(time)
+
+                campeo ={
+                  "id": len(dici)+1,
+                  "nome": nome,
+                  "data_inicio": data1,
+                  "data_fim": data2,
+                  "time_vencedor": vencedor,
+                  "placar_final": f'{gol1}-{gol2}',
+                  "artilheira": arti,
+                  "gols_artilheira": golsart,
+                  "times_participantes": times,
+                  "estado": estado
+                }
+                fim = input(f'As informações abaixo estão corretas?\nNome: {campeo['nome']}\nData de inicio: {campeo['data_inicio']}\nData de fim: {campeo['data_fim']}\nTime vencedor: {campeo['time_vencedor']}\nPlacar final: {campeo['placar_final']}\nArtilheira: {campeo['artilheira'].split(',')}\nGols da artilheira: {campeo['gols_artilheira']}\nTimes participantes: {campeo['times_participantes']}\nEstado: {campeo['estado']}\n\nCaso não, digite "RECOMEÇAR" para fazer outro')
+                if fim.upper()== 'RECOMEÇAR':
+                    pass
+                else:
+                    escritacamp(campeo)
+                    print('Arquivo salvo!')
+                    break
 
 
 
 
 
 
-# def sub06():
+
+
+
+
+
+            # def sub06():
 #     """
 #     Procurar um campeonato em específico por
 #     sua identidade
