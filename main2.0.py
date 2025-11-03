@@ -4,6 +4,7 @@ from datetime import date
 import json
 import os
 
+from nltk.sem.chat80 import items
 from pyarrow import nulls
 
 
@@ -26,18 +27,16 @@ def escritauser(user):
 
 
 def econtrarcamp():
-    if os.path.exists('campeonatos.json'):
-        with ('campeonatos.json', 'r') as camps:
+    if os.path.exists('camps.json'):
+        with open('camps.json', 'r') as camps:
             campeonatos = json.load(camps)
     else:
-        campeonatos = []
+        campeonatos = {'campeonatos':[]}
     return campeonatos
 
 def escritacamp(camp):
-    dici = encontraruser()
-    camps = dici["campeonatos"]
-    print(camps)
-    camps.append(camp)
+    dici = econtrarcamp()
+    dici['campeonatos'].append(camp)
     with open('camps.json', 'w') as campus:
         json.dump(dici, campus, indent=2)
 
@@ -236,7 +235,7 @@ def sub05():
     que pode ser apenas números
     """
     m = input(
-        '\nBem vindo ao submenu 4\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
+        '\nBem vindo ao submenu 5\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
     if m.upper() == 'SAIR':
         pass
     else:
@@ -245,16 +244,17 @@ def sub05():
             nome = input('Qual é o nome do campeonato?\n')
             data1 = input('Digite a data do >>INICIO<< do campeonato em formato AAAA-MM-DD\nEx: 2025-10-30\n')
             data2 = input('Digite a data do >>FIM<< do campeonato em formato AAAA-MM-DD\nEx: 2025-10-31\n')
-            datatual = date.today()
-            try:
-                if int(data1[-2:-1]) and int(data1[-5:-4]) and int(data1[0:3]) >= int(datatual[-2:-1]) and int(datatual[-5:-4]) and int(datatual[0:3]):
-                    estado ='terminado'
-                else:
-                    estado = 'a ocorrer'
-            except ValueError:
-                print('Você provavelmente colocou algum valor na data final errado\nA data final será declarada como nula e o estado "a ocorrer", mude depois no submenu 7')
+            datatual = str(date.today())
+            if data1=='' or data2=='':
+                print(
+                    'Você provavelmente colocou algum valor na data final errado\nA data final e inicial serão declaradas como nula e o estado "a ocorrer", mude depois no submenu 7')
                 estado = 'a ocorrer'
+                data1 = None
                 data2 = None
+            elif not datatual<data2:
+                estado ='terminado'
+            else:
+                estado = 'a ocorrer'
 
             if estado == 'terminado':
                 vencedor = input('Qual é o time vencedor?')
@@ -273,7 +273,7 @@ def sub05():
                 vencedor = None
                 gol1 = None
                 gol2 = None
-                arti = 'Tem alguma artilheira definida?\nSe não, deixe esse espaço vazio e apenas dê enter\n'
+                arti = input('Tem alguma artilheira definida?\nSe não, deixe esse espaço vazio e apenas dê enter\n')
                 if arti=='':
                     golsart = None
                     arti = None
@@ -283,178 +283,266 @@ def sub05():
                     except ValueError:
                         print('Erro: Você não colocou um número inteiro, iremos considerar o valo como nulo, mude isso depois no subemenu 7')
                         golsart = None
-                times = []
-                while True:
-                    time = input('Quais são os timpes participantes?\nDIGITE "SAIR" QUANTO NÃO TIVER MAIS TIMES PARA ADICIONAR\n')
-                    if time.upper()=='SAIR':
+            times1 = []
+            while True:
+                time = input('Quais são os timpes participantes?\nDIGITE "SAIR" QUANTO NÃO TIVER MAIS TIMES PARA ADICIONAR\n')
+                if time.upper()=='SAIR':
+                    if not len(times1)==1:
                         break
-                    times.append(time)
+                    else:
+                        print('Por favor, coloque mais de um time')
+                times1.append(time)
+            times2 = ''
+            for i in times1:
+                times2+=i+', '
+            campeo ={
+              "id": len(dici['campeonatos'])+1,
+              "nome": nome,
+              "data_inicio": data1,
+              "data_fim": data2,
+              "time_vencedor": vencedor,
+              "placar_final": f'{gol1}-{gol2}',
+              "artilheira": arti,
+              "gols_artilheira": golsart,
+              "times_participantes": times1,
+              "estado": estado
+            }
+            print(times2)
+            fim = input(f'As informações abaixo estão corretas?\nNome: {campeo['nome']}\nData de inicio: {campeo['data_inicio']}\nData de fim: {campeo['data_fim']}\nTime vencedor: {campeo['time_vencedor']}\nPlacar final: {campeo['placar_final']}\nArtilheira: {campeo['artilheira']}\nGols da artilheira: {campeo['gols_artilheira']}\nTimes participantes: {(times2[0:-2])+'.'}\nEstado: {campeo['estado']}\n\nCaso não, digite "RECOMEÇAR" para fazer outro')
+            if fim.upper()== 'RECOMEÇAR':
+                pass
+            else:
+                print(f'Arquivo salvo!\nID do campeonato: {campeo['id']}')
+                print(dici)
+                escritacamp(campeo)
+                print('Arquivo salvo!')
+                break
+    p()
 
-                campeo ={
-                  "id": len(dici)+1,
-                  "nome": nome,
-                  "data_inicio": data1,
-                  "data_fim": data2,
-                  "time_vencedor": vencedor,
-                  "placar_final": f'{gol1}-{gol2}',
-                  "artilheira": arti,
-                  "gols_artilheira": golsart,
-                  "times_participantes": times,
-                  "estado": estado
-                }
-                fim = input(f'As informações abaixo estão corretas?\nNome: {campeo['nome']}\nData de inicio: {campeo['data_inicio']}\nData de fim: {campeo['data_fim']}\nTime vencedor: {campeo['time_vencedor']}\nPlacar final: {campeo['placar_final']}\nArtilheira: {campeo['artilheira'].split(',')}\nGols da artilheira: {campeo['gols_artilheira']}\nTimes participantes: {campeo['times_participantes']}\nEstado: {campeo['estado']}\n\nCaso não, digite "RECOMEÇAR" para fazer outro')
-                if fim.upper()== 'RECOMEÇAR':
-                    pass
-                else:
-                    escritacamp(campeo)
-                    print('Arquivo salvo!')
+
+def sub06():
+    """
+    Procurar um campeonato em específico por
+    sua identidade
+    """
+    m = input(
+        '\nBem vindo ao submenu 6\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
+    if m.upper() == 'SAIR':
+        pass
+    else:
+        dici = econtrarcamp()
+        camps = dici['campeonatos']
+        try:
+            a = int(input('Digite o ID do campeonato\n'))
+            achou = False
+            for i in camps:
+                if i['id']==a:
+                    achou = True
+                    campeo = i
                     break
+            if not achou:
+                print('Esse campeonato não existe, se quer ter certeza que ele existe, então utilize o submenu 10')
+            else:
+                print(f'\nID: {campeo['id']}\nNome: {campeo['nome']}\nData de inicio: {campeo['data_inicio']}\nData de fim: {campeo['data_fim']}\nTime vencedor: {campeo['time_vencedor']}\nPlacar final: {campeo['placar_final']}\nArtilheira: {campeo['artilheira']}\nGols da artilheira: {campeo['gols_artilheira']}\nTimes participantes: {(campeo['times_participantes'])}\nEstado: {campeo['estado']}\n\nCaso não, digite "RECOMEÇAR" para fazer outro')
+        except ValueError:
+            print('Coloque um número')
+    p()
+
+def sub07():
+    """
+    Modificar um dado específico de um campeonato
+    para casos de mudanças de planos ou correção de erro
+    """
+    m = input(
+        '\nBem vindo ao submenu 7\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
+    if m.upper() == 'SAIR':
+        pass
+    else:
+        while True:
+            dici = econtrarcamp()
+            camps = dici['campeonatos']
+            achou = False
+            try:
+                a = int(input('Digite o ID do campeonato\n'))
+            except ValueError:
+                print('Coloque um número')
+            for i in camps:
+                if i['id'] == a:
+                    achou = True
+                    campeo = i
+            if not achou:
+                print('Esse campeonato não existe, se quer ter certeza que ele existe, então utilize o submenu 10')
+            else:
+                estadoantigo = campeo
+                a = input(f'Que informação você gostaria de modificar?\n1 - Nome\n2 - Data de inicio\n3 - Data Final\n4 - Time vencedor\n5 - Placar final\n6 - Artilheira\n7 - Gols de artilheira\n8 - Times participantes\n 9 - Estado do campeonato')
+                if a == '1':
+                    print(f'Nome antigo:{campeo['nome']}')
+                    b = input('Qual é o nome novo?\n')
+                    print(f'Novo novo colocado: {b}')
+                    campeo['nome'] = b
+                elif a == '2':
+                    print(f'Data antiga:{campeo['data_inicio']}')
+                    b = input('Qual é a data inicial nova??\n')
+                    print(f'Nova data colocada: {b}')
+                    campeo['data_inicio'] = b
+                elif a=='3':
+                    print(f'Data antiga:{campeo['data_fim']}')
+                    b = input('Qual é a data final nova??\n')
+                    print(f'Nova data colocado: {b}')
+                    campeo['data_fim'] = b
+                elif a=='4':
+                    print(f'Vencedor antigo:{campeo['time_vencedor']}')
+                    b = input('Qual é o time vencedor novo?\n')
+                    print(f'Novo time vencedor colocado: {b}')
+                    campeo['time_vencedor'] = b
+                elif a=='5':
+                    print(f'Placar final antigo:{campeo['placar_final']}')
+                    b1 = input('Quantos gols o primeiro time fez?\n')
+                    b2 = input('Quantos gols o segundo time fez?')
+                    c = f'{b1}-{b2}'
+                    print(f'Novo placar final colocado: {c}')
+                    campeo['placar_final'] = c
+                elif a=='6':
+                    print(f'Artilheira antiga:{campeo['artilheira']}')
+                    b = input('Qual é a nova artilheira?\n')
+                    print(f'Nova artilheira colocada: {b}')
+                    campeo['artilheira'] = b
+                elif a=='7':
+                    print(f'Gols de artilheira antigo:{campeo['gols_artilheira']}')
+                    while True:
+                        try:
+                            b = int(input('Qual são os novos gols de artilheira?\n'))
+                            break
+                        except ValueError:
+                            print('Números inteiros apenas')
+                    print(f'Novos gols: {b}')
+                    campeo['gols_artilheira'] = b
+                elif a=='8':
+                    times = campeo['times_participantes']
+                    print(f'Time: {times}')
+                    b = input('O que deseja?\n1 - Adicionar time\n2 - Excluir time\n3 - Editar time')
+                    if b=='1':
+                        c = input('Nome do time?\n')
+                        campeo['times_participantes'].append(c)
+                    elif b=='2':
+                        for i in times:
+                            print(i)
+                        c = input('Qual desses times você deseja excluir?')
+                        if not c in times:
+                            print('Esse time não existe')
+                        else:
+                          campeo['times_participantes'].pop(times.index(c))
+                    elif b=='3':
+                        for i in times:
+                            print(i)
+                        c = input('Qual desses times você deseja modificar?')
+                        if not c in times:
+                            print('Esse time não existe')
+                        else:
+                            d = input(f'O que deseja colocar no lugar do item {c}?')
+                            campeo['times_participantes'].append(d)
+                            campeo['times_participantes'].pop(times.index(c))
+
+                    else:
+                        print('Essa opção não existe')
+                elif a=='9':
+                    print(f'Estado antigo:{campeo['estado']}')
+                    b = input('Qual é o novo estado?\n')
+                    print(f'Novo estado colocado: {b}')
+                    campeo['estado'] = b
+            print(
+                f'\nID: {campeo['id']}\nNome: {campeo['nome']}\nData de inicio: {campeo['data_inicio']}\nData de fim: {campeo['data_fim']}\nTime vencedor: {campeo['time_vencedor']}\nPlacar final: {campeo['placar_final']}\nArtilheira: {campeo['artilheira']}\nGols da artilheira: {campeo['gols_artilheira']}\nTimes participantes: {(campeo['times_participantes'])}\nEstado: {campeo['estado']}\n\nCaso não, digite "RECOMEÇAR" para fazer outro')
+            dici['campeonatos'].remove(estadoantigo)
+            dici['campeonatos'].append(campeo)
+            with open('camps.json', 'w') as campeos:
+                json.dump(dici, campeos)
+            m = input('Se deseja voltar ao menu, digite "VOLTAR"\nSe quiser continuan editando, dê apenas enter')
+            if m.upper()=='VOLTAR':
+                break
+    p()
+
+def sub08():
+    """
+    Deletação de um campeonato.
+    """
+    m = input(
+        '\nBem vindo ao submenu 7\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
+    if m.upper() == 'SAIR':
+        menuprincipal()
+    else:
+        dici = econtrarcamp()
+        camps = dici['campeonatos']
+        achou = False
+        while True:
+            try:
+                a = int(input('Digite o ID do campeonato\n'))
+                break
+            except ValueError:
+                print('Coloque um número')
+        for i in camps:
+            if i['id'] == a:
+                achou = True
+                campeo = i
+                break
+        if not achou:
+            print('Esse campeonato não existe, se quer ter certeza que ele existe, então utilize o submenu 10')
+        else:
+            dici['campeonatos'].remove(campeo)
+            with open('camps.json', 'w') as campeos:
+                json.dump(dici, campeos)
+
+
+
+
+def sub09():
+    """
+    Deleção de uma usuária
+    """
+    m = input(
+        '\nBem vindo ao submenu 9\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
+    if m.upper() == 'SAIR':
+        menuprincipal()
+    else:
+        dici = encontraruser()
+        users = dici['users']
+        a = input('Diga o número de registro da jogadora a ser deletada')
+        existe = False
+        for i in users:
+            if i['RM']==a:
+                existe = True
+                user = i
+            if existe:
+                b = input(f'Deseja mesmo remover a usuária {i['nome']} portadora do RM {i['RM']}?\nCaso sim, digite "SIM", caso não, apenas dê enter\n---->')
+                if b.upper() == 'SIM':
+                    dici['users'].remove(user)
+                    with open('users.json', 'w') as usus:
+                        json.dump(dici, usus)
+                else:
+                    print('Operação cancelada')
+            else:
+                print('Essa usuária não existe')
+    p()
 
 
 
 
 
 
-
-
-
-
-
-            # def sub06():
-#     """
-#     Procurar um campeonato em específico por
-#     sua identidade
-#     """
-#     m = input(
-#         '\nBem vindo ao submenu 6\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
-#     if m.upper() == 'SAIR':
-#         menuprincipal()
-#     else:
-#         a = input('Digite o nome do campeonato\n')
-#         if a in campeonatos.keys():
-#             print(campeonatos[a])
-#             p()
-#         else:
-#             print('Este campeonato não existe.')
-#             p()
-
-# def sub07():
-#     """
-#     Modificar um dado específico de um campeonato
-#     para casos de mudanças de planos ou correção de erro
-#     """
-#     m = input(
-#         '\nBem vindo ao submenu 7\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
-#     if m.upper() == 'SAIR':
-#         menuprincipal()
-#     else:
-#         a = input('Digite o número do campeonato\n')
-#         if a in campeonatos.keys():
-#             b = input('Digite o dado que deseja modificar\n(Dados modificáveis: NOME, DIA, HORÁRIO, TIME1, TIME2, PLACAR, ESTADO)\n')
-#             if b.upper() == 'NOME':
-#                 c = input(f'Digite o novo nome do campeonato\n(Nome anterior:{(campeonatos.get(a)).get("Nome:")})')
-#                 campeonatos[a].update({'Nome:': c})
-#             elif b.upper() == 'DIA':
-#                 c = input(f'Digite a nova data do campeonato em formato DD/MM/AAAA\n(Data anterior:{(campeonatos.get(a)).get("Data:")})')
-#                 campeonatos[a].update({'Data:': c})
-#             elif b.upper() == 'TIME1':
-#                 c = input(f'Digite o novo time 1 do campeonato\n(Time1 anterior:{(campeonatos.get(a)).get("Time1:")})')
-#                 campeonatos[a].update({'Time1:': c})
-#             elif b.upper() == 'TIME2':
-#                 c = input(f'Digite o novo time 2 do campeonato\n(Time2 anterior:{(campeonatos.get(a)).get("Time2:")})')
-#                 campeonatos[a].update({'Time2:': c})
-#             elif b.upper() == 'PLACAR':
-#                 print(f'Placar anterior: {(campeonatos.get(a)).get("Placar:")}')
-#                 c1 = int(input('Quantos gols o time 1 tem?'))
-#                 c2 = int(input('Quantos gols o time 2 tem?'))
-#                 d = f'{c1}x{c2}'
-#                 if c1 > c2:
-#                     vencedor = (campeonatos.get(a)).get("Time1:")
-#                 elif c2 == c1:
-#                     vencedor = 'Empate'
-#                 else:
-#                     vencedor = (campeonatos.get(a)).get("Time2:")
-#                 campeonatos[a].update({'Placar:': d})
-#                 campeonatos[a].update({'Vencedor:': vencedor})
-#             elif b.upper() == 'ESTADO':
-#                 c = input(f'Digite o novo nome do campeonato\n(Estado anterior:{(campeonatos.get(a)).get("Estado:")})')
-#                 campeonatos[a].update({'Estado:': c})
-#             elif b.upper() == 'HORÁRIO' or b.upper()=='HORARIO':
-#                 c = input(f'Digite o novo nome do campeonato\n(Horário anterior:{(campeonatos.get(a)).get("Horário:")})')
-#                 campeonatos[a].update({'Horário:': c})
-#             else:
-#                 print('Aparentemente você errou o tipo de dado que quer modificar, tente novamente.')
-#             p()
-#         else:
-#             print('Esse campeonato não existe pelos nossos dados\nOu talvez você errou seu número, verifique no submenu 6 ou 10')
-#             p()
-
-
-
-
-# def sub08():
-#     """
-#     Deleção de um campeonato.
-#     """
-#     m = input(
-#         '\nBem vindo ao submenu 7\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
-#     if m.upper() == 'SAIR':
-#         menuprincipal()
-#     else:
-#         a = input('Diga o número de identificação do campeonato')
-#         if a in campeonatos.keys():
-#             b = input('Deseja mesmo DELETAR o campeonato?\nDigitar "Deletar" caso sim')
-#             if b.upper() == 'DELETAR':
-#                 campeonatos.pop(a)
-#                 print('Campeonato deletado')
-#                 p()
-#             else:
-#                 print('Operação cancelada, voltando ao menu principal')
-#                 p()
-#         else:
-#             print('Esse campeonato não existe, tente ver no submenu 6 ou 10')
-#             p()
-
-
-# def sub09():
-#     """
-#     Deleção de uma usuária
-#     """
-#     m = input(
-#         '\nBem vindo ao submenu 9\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
-#     if m.upper() == 'SAIR':
-#         menuprincipal()
-#     else:
-#         a = int(input('Diga o número de registro da jogadora a ser deletada'))
-#         if a in users.keys():
-#             print(users.get(a))
-#             b = input('Deseja mesmo DELETAR essa usuária?\nDigitar "Deletar" caso sim')
-#             if b.upper() == 'DELETAR':
-#                 users.pop(a)
-#                 print('Usuária deletada, voltando ao menu principal')
-#                 p()
-#             else:
-#                 print('Operação cancelada, voltando ao menu principal')
-#         else:
-#             print('Usuária não se encontra no sistema, tente ver se ela existe mesmo no submenu 2 ou 3')
-#             p()
-
-
-
-
-
-# def sub10():
-#     """
-#     Procura por todos os campeonatos alistados
-#     """
-#     m = input(
-#         '\nBem vindo ao submenu 10\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
-#     if m.upper() == 'SAIR':
-#         menuprincipal()
-#     else:
-#         for i in campeonatos.items():
-#             print(i)
-#         p()
+def sub10():
+    """
+    Procura por todos os campeonatos alistados
+    """
+    m = input(
+        '\nBem vindo ao submenu 10\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
+    if m.upper() == 'SAIR':
+        menuprincipal()
+    else:
+        dici = econtrarcamp()
+        camps = dici['campeonatos']
+        for i in camps:
+            print('###########################################################################################################################')
+            print(f'\nID: {i['id']}\nNome: {i['nome']}\nData de inicio: {i['data_inicio']}\nData de fim: {i['data_fim']}\nTime vencedor: {i['time_vencedor']}\nPlacar final: {i['placar_final']}\nArtilheira: {i['artilheira']}\nGols da artilheira: {i['gols_artilheira']}\nTimes participantes: {(i['times_participantes'])}\nEstado: {i['estado']}\n')
+        p()
 
 
 
@@ -472,31 +560,31 @@ def menuprincipal():
         print('9 - Deletar usuário')
         print('10 - Ver todos os Campeonatos')
         print('11 - Sair')
-        a = int(input('Digite o número do submenu que deseja acessar\n\n'))
-        if a==1:
+        a = input('Digite o número do submenu que deseja acessar\n\n')
+        if a=='1':
             sub01()
-        elif a==2:
+        elif a=='2':
             sub02()
-        elif a == 3:
+        elif a == '3':
             sub03()
-        elif a == 4:
+        elif a == '4':
             sub04()
-        elif a == 5:
+        elif a == '5':
             sub05()
-#         elif a == 6:
-#             sub06()
-#         elif a == 7:
-#             sub07()
-#         elif a == 8:
-#             sub08()
-#         elif a == 9:
-#             sub09()
-#         elif a == 10:
-#             sub10()
-#         elif a== 11:
-#             break
-#         else:
-#             print('Tente novamente')
+        elif a == '6':
+            sub06()
+        elif a == '7':
+            sub07()
+        elif a == '8':
+            sub08()
+        elif a == '9':
+            sub09()
+        elif a == '10':
+            sub10()
+        elif a== '11':
+            break
+        else:
+            print('Tente novamente')
 
 
 
