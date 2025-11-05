@@ -4,29 +4,45 @@ from datetime import date
 import json
 import os
 
-from nltk.sem.chat80 import items
-from pyarrow import nulls
 
 
 #Funções de procura
+
+
 def encontraruser():
+    """
+    Recebe nenhum valor
+    Busca pelo arquivo users.json
+    Se o arquivo existir, abre e carrega o json
+    Caso contrário, retorna um dicionário vazio igual, mas com nada dentro
+    """
     if os.path.exists('users.json'):
         with open('users.json', 'r') as usuarios:
             users = json.load(usuarios)
     else:
-        users = []
+        users = {'users':[]} #Se o arquivo users.json a função retorna à variável um dicionário identico à estrustura orginal (O mesmo é feito em econtrarcamp())
     return users
 
-def escritauser(user):
+def escritauser(user): 
+    """
+    Recebe como parâmetro um dicionário com as informações do usuário
+    Realiza o dump de informações de um usuário
+    no arquivo users.json
+    """
     dici = encontraruser()
     users = dici["users"]
-    print(users)
     users.append(user)
     with open('users.json', 'w') as usus:
         json.dump(dici, usus, indent=2)
 
 
 def econtrarcamp():
+    """
+    Recebe nenhum parâmetro
+    Busca pelo arquivo camps.json
+    Se o arquivo existir, abre e carrega o json
+    Caso contrário, retorna um dicionário vazio igual, mas com nada dentro
+    """
     if os.path.exists('camps.json'):
         with open('camps.json', 'r') as camps:
             campeonatos = json.load(camps)
@@ -35,6 +51,11 @@ def econtrarcamp():
     return campeonatos
 
 def escritacamp(camp):
+    """
+    Recebe como parâmetro um dicionário com as informações de um campeonato
+    Realiza o dump de informações do campeonato
+    no arquivo camps.json
+    """
     dici = econtrarcamp()
     dici['campeonatos'].append(camp)
     with open('camps.json', 'w') as campus:
@@ -66,22 +87,36 @@ def sub01():
         users = encontraruser()
         while True:
             nome = input('Diga o nome da usuária a ser cadastrada\n')
-            data = input('Diga a data de nascimento em formato AAAA-MM-DD \nEX:(1980-01-17)')
-            entrada = input('Diga o dia de entrada em formato AAAA-MM-DD \nEX:(2007-02-18)')
+            DD1 = input('Diga o dia de nascimento (DD) \nEX:(17)\n')
+            MM1 = input('Diga o mês de nascimento (MM) \nEX:(01)\n')
+            AAAA1 = input('Diga o ano de nascimento (AAAA) \nEX:(1980)\n')
+            try:
+                data = datetime(AAAA1,MM1,DD1)
+            except ValueError:
+                print('Erro: Data inválida, data será considerada a mesma de hoje, arrume isso depois no submenu 4')
+                data = date.today()
+            DD2 = input('Diga o dia de entrada (DD) \nEX:(18)\n')
+            MM2 = input('Diga o mês de entrada (MM) \nEX:(02)\n')
+            AAAA2 = input('Diga o ano de entrada (AAAA) \nEX:(2007)\n')
+            try: 
+                entrada = datetime(AAAA2,MM2,DD2)
+            except ValueError:
+                print('Erro: Data inválida, data será considerada a mesma de hoje, arrume isso depois no submenu 4')
+                data = date.today()
             time = input('Diga o time da usuária\nEX: (Kansas City)')
             numero = input('Diga o número da camisa da usuária\nEX: (10)')
             posicao = input('Diga a posição da jogadora\nEX: (Zagueira)')
             b = input('Tem certeza que os dados estão corretos?\nCaso não, digita "Recomeçar" para reiniciar os dados a serem colocados\nCaso sim, apenas dê enter\n')
             if not b.upper() == 'RECOMEÇAR':
-                existe = False
                 while True:
+                    existe = False
                     usuarios = users["users"]
                     regis = str(random.randint(100000,999999))
                     for i in usuarios:
                         if i["RM"] == regis:
                             existe = True
                     if not existe:
-                        print('Você vai morrer')
+                        print(f'RM da usuária {nome}: {regis}')
                         break
                 usuaria = {"nome": nome,
                   "data_nascimento": data,
@@ -91,7 +126,6 @@ def sub01():
                   "numero_camisa": numero,
                   "posicao": posicao
                 }
-                print(usuaria)
                 escritauser(usuaria)
             p()
             break
@@ -132,11 +166,16 @@ def sub03():
         a = input('\nDiga o resgitro da usuária\n')
         exis = False
         for i in  users:
-            if i["RM"]==a:
-                print(f"Nome: {i["nome"]}\nRM:{i["RM"]}\nData de Nascimento: {i["data_nascimento"]}\nDia de entrada: {i["dia_entrada"]}\nTime: {i["time"]}\nNúmero: {i["numero_camisa"]}\nPosição: {i["posicao"]}")
-                exis = True
+            if not users == []: 
+                if i["RM"]==a:
+                    exis = True
+            else:
+                break
         if not exis:
             print('\nA usuária não se encontra no registro.\n')
+        else:
+            print(f"Nome: {i["nome"]}\nRM:{i["RM"]}\nData de Nascimento: {i["data_nascimento"]}\nDia de entrada: {i["dia_entrada"]}\nTime: {i["time"]}\nNúmero: {i["numero_camisa"]}\nPosição: {i["posicao"]}")
+
         p()
 
 def sub04():
@@ -230,9 +269,8 @@ def sub04():
 
 def sub05():
     """
-    Cadastro de cameponato
-    recebe uma identidade prórpia
-    que pode ser apenas números
+    Cadastro de camepeonato
+    recebe e cria times, nomes, datas e etc
     """
     m = input(
         '\nBem vindo ao submenu 5\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
@@ -295,8 +333,17 @@ def sub05():
             times2 = ''
             for i in times1:
                 times2+=i+', '
+            while True:
+                exis = False
+                id = str(random.randint(1000,9999))
+                if not dici['campeonatos']==[]:
+                    for i in dici['campeonatos']:
+                        if i['id']==id:
+                            exis = True
+                    if not exis:
+                        break
             campeo ={
-              "id": len(dici['campeonatos'])+1,
+              "id": id,
               "nome": nome,
               "data_inicio": data1,
               "data_fim": data2,
@@ -363,7 +410,7 @@ def sub07():
             camps = dici['campeonatos']
             achou = False
             try:
-                a = int(input('Digite o ID do campeonato\n'))
+                a = input('Digite o ID do campeonato\n')
             except ValueError:
                 print('Coloque um número')
             for i in camps:
@@ -447,9 +494,16 @@ def sub07():
                         print('Essa opção não existe')
                 elif a=='9':
                     print(f'Estado antigo:{campeo['estado']}')
-                    b = input('Qual é o novo estado?\n')
-                    print(f'Novo estado colocado: {b}')
-                    campeo['estado'] = b
+                    b = input('Opções de novos estados:\n1 - A ocorrer\n2 - Terminado\n3 - Cancelado\n')
+                    if b=='1':
+                        campeo['estado']='a ocorrer'
+                    elif b=='2':
+                        campeo['estado']='terminado'
+                    elif b=='3':
+                        campeo['estado']='cancelado'
+                    else:
+                        print('Essa opção não existe')
+                    
             print(
                 f'\nID: {campeo['id']}\nNome: {campeo['nome']}\nData de inicio: {campeo['data_inicio']}\nData de fim: {campeo['data_fim']}\nTime vencedor: {campeo['time_vencedor']}\nPlacar final: {campeo['placar_final']}\nArtilheira: {campeo['artilheira']}\nGols da artilheira: {campeo['gols_artilheira']}\nTimes participantes: {(campeo['times_participantes'])}\nEstado: {campeo['estado']}\n\nCaso não, digite "RECOMEÇAR" para fazer outro')
             dici['campeonatos'].remove(estadoantigo)
@@ -466,7 +520,7 @@ def sub08():
     Deletação de um campeonato.
     """
     m = input(
-        '\nBem vindo ao submenu 7\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
+        '\nBem vindo ao submenu 8\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
     if m.upper() == 'SAIR':
         menuprincipal()
     else:
