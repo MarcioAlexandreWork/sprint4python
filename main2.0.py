@@ -1,6 +1,6 @@
-import datetime
 import random
 from datetime import date
+import datetime
 import json
 import os
 
@@ -74,6 +74,19 @@ def p():
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 def sub01():
     """
      Cadastro de usuárias na instalação
@@ -87,22 +100,25 @@ def sub01():
         users = encontraruser()
         while True:
             nome = input('Diga o nome da usuária a ser cadastrada\n')
-            DD1 = input('Diga o dia de nascimento (DD) \nEX:(17)\n')
-            MM1 = input('Diga o mês de nascimento (MM) \nEX:(01)\n')
-            AAAA1 = input('Diga o ano de nascimento (AAAA) \nEX:(1980)\n')
             try:
-                data = datetime(AAAA1,MM1,DD1)
+                DD1 = int(input('Diga o dia de nascimento (DD) \nEX:(17)\n'))
+                MM1 = int(input('Diga o mês de nascimento (MM) \nEX:(01)\n'))
+                AAAA1 = int(input('Diga o ano de nascimento (AAAA) \nEX:(1980)\n'))
+
+                data = f'{AAAA1}-{MM1}-{DD1}'
             except ValueError:
                 print('Erro: Data inválida, data será considerada a mesma de hoje, arrume isso depois no submenu 4')
                 data = date.today()
-            DD2 = input('Diga o dia de entrada (DD) \nEX:(18)\n')
-            MM2 = input('Diga o mês de entrada (MM) \nEX:(02)\n')
-            AAAA2 = input('Diga o ano de entrada (AAAA) \nEX:(2007)\n')
-            try: 
-                entrada = datetime(AAAA2,MM2,DD2)
+            try:
+                DD2 = int(input('Diga o dia de entrada (DD) \nEX:(18)\n'))
+                MM2 = int(input('Diga o mês de entrada (MM) \nEX:(02)\n'))
+                AAAA2 = int(input('Diga o ano de entrada (AAAA) \nEX:(2007)\n'))
+                entrada = f'{AAAA2}-{MM2}-{DD2}'
             except ValueError:
                 print('Erro: Data inválida, data será considerada a mesma de hoje, arrume isso depois no submenu 4')
-                data = date.today()
+                entrada = date.today()
+            print(entrada)
+            print(data)
             time = input('Diga o time da usuária\nEX: (Kansas City)')
             numero = input('Diga o número da camisa da usuária\nEX: (10)')
             posicao = input('Diga a posição da jogadora\nEX: (Zagueira)')
@@ -280,16 +296,33 @@ def sub05():
         while True:
             dici = econtrarcamp()
             nome = input('Qual é o nome do campeonato?\n')
-            data1 = input('Digite a data do >>INICIO<< do campeonato em formato AAAA-MM-DD\nEx: 2025-10-30\n')
-            data2 = input('Digite a data do >>FIM<< do campeonato em formato AAAA-MM-DD\nEx: 2025-10-31\n')
+            try:
+                DD1 = int(input('Diga o dia de nascimento (DD) \nEX:(17)\n'))
+                MM1 = int(input('Diga o mês de nascimento (MM) \nEX:(01)\n'))
+                AAAA1 = int(input('Diga o ano de nascimento (AAAA) \nEX:(1980)\n'))
+                if DD1<=1:
+                    DD1 = ('0'+str(DD1))
+                elif MM1<=1:
+                    MM1 = ('0'+str(AAAA1))
+
+                data1 = f'{AAAA1}-{MM1}-{DD1}'
+            except ValueError:
+                print('Erro: Data inválida, data será considerada a mesma de hoje, arrume isso depois no submenu 7')
+                data1 = str(date.today())
+            try:
+                DD2 = int(input('Diga o dia de entrada (DD) \nEX:(18)\n'))
+                MM2 = int(input('Diga o mês de entrada (MM) \nEX:(02)\n'))
+                AAAA2 = int(input('Diga o ano de entrada (AAAA) \nEX:(2007)\n'))
+                if DD2<=9:
+                    DD2 = ('0'+str(DD2))
+                elif MM2<=1:
+                    MM2 = ('0'+str(MM2))
+                data2 = f'{AAAA2}-{MM2}-{DD2}'
+            except ValueError:
+                print('Erro: Data inválida, data será considerada a mesma de hoje, arrume isso depois no submenu 7')
+                data2 = str(date.today())
             datatual = str(date.today())
-            if data1=='' or data2=='':
-                print(
-                    'Você provavelmente colocou algum valor na data final errado\nA data final e inicial serão declaradas como nula e o estado "a ocorrer", mude depois no submenu 7')
-                estado = 'a ocorrer'
-                data1 = None
-                data2 = None
-            elif not datatual<data2:
+            if not datatual<data2:
                 estado ='terminado'
             else:
                 estado = 'a ocorrer'
@@ -303,14 +336,14 @@ def sub05():
                     golsart = int(input('Quantos gols a artilheira fez no total?'))
                 except ValueError:
                     print('Erro: Valores não inteiros colocados, consideraremos o nome da artilheira, gols da artilheira, gols do primeiro, segundo time como nulos.\nMude isso no submenu 7 depois, ou reinicie o cadastro de campeonato depois')
-                    gol1 = None
-                    gol2 = None
+                    gol1 = 0
+                    gol2 = 0
                     golsart = None
-                    arti= None
+                    arti= 0
             else:
                 vencedor = None
-                gol1 = None
-                gol2 = None
+                gol1 = 0
+                gol2 = 0
                 arti = input('Tem alguma artilheira definida?\nSe não, deixe esse espaço vazio e apenas dê enter\n')
                 if arti=='':
                     golsart = None
@@ -320,19 +353,21 @@ def sub05():
                         golsart = int(input('Quantos gols a artilheira fez?'))
                     except ValueError:
                         print('Erro: Você não colocou um número inteiro, iremos considerar o valo como nulo, mude isso depois no subemenu 7')
-                        golsart = None
+                        golsart = 0
             times1 = []
             while True:
                 time = input('Quais são os timpes participantes?\nDIGITE "SAIR" QUANTO NÃO TIVER MAIS TIMES PARA ADICIONAR\n')
                 if time.upper()=='SAIR':
-                    if not len(times1)==1:
+                    if not len(times1)<=1:
                         break
+                    elif not len(times1)%2==1:
+                        print('Quantidade de times é impar, com coloque mais um time por favor')
                     else:
                         print('Por favor, coloque mais de um time')
                 times1.append(time)
             times2 = ''
             for i in times1:
-                times2+=i+', '
+                times2+=i+', ' #Variável criada apenas para valor estético que será utilizado quando printar as informações
             while True:
                 exis = False
                 id = str(random.randint(1000,9999))
@@ -354,13 +389,11 @@ def sub05():
               "times_participantes": times1,
               "estado": estado
             }
-            print(times2)
             fim = input(f'As informações abaixo estão corretas?\nNome: {campeo['nome']}\nData de inicio: {campeo['data_inicio']}\nData de fim: {campeo['data_fim']}\nTime vencedor: {campeo['time_vencedor']}\nPlacar final: {campeo['placar_final']}\nArtilheira: {campeo['artilheira']}\nGols da artilheira: {campeo['gols_artilheira']}\nTimes participantes: {(times2[0:-2])+'.'}\nEstado: {campeo['estado']}\n\nCaso não, digite "RECOMEÇAR" para fazer outro')
             if fim.upper()== 'RECOMEÇAR':
                 pass
             else:
                 print(f'Arquivo salvo!\nID do campeonato: {campeo['id']}')
-                print(dici)
                 escritacamp(campeo)
                 print('Arquivo salvo!')
                 break
@@ -509,7 +542,7 @@ def sub07():
             dici['campeonatos'].remove(estadoantigo)
             dici['campeonatos'].append(campeo)
             with open('camps.json', 'w') as campeos:
-                json.dump(dici, campeos)
+                json.dump(dici, campeos, ident=2)
             m = input('Se deseja voltar ao menu, digite "VOLTAR"\nSe quiser continuan editando, dê apenas enter')
             if m.upper()=='VOLTAR':
                 break
@@ -517,7 +550,8 @@ def sub07():
 
 def sub08():
     """
-    Deletação de um campeonato.
+    Excluir um campeonato.
+    Requer ID do campeonato
     """
     m = input(
         '\nBem vindo ao submenu 8\nCaso tenha entrado aqui por engano\ne queira voltar o menu principal escreva "Sair"\nCaso não, apenas dê enter\n')
@@ -529,7 +563,7 @@ def sub08():
         achou = False
         while True:
             try:
-                a = int(input('Digite o ID do campeonato\n'))
+                a = input('Digite o ID do campeonato\n')
                 break
             except ValueError:
                 print('Coloque um número')
@@ -541,9 +575,14 @@ def sub08():
         if not achou:
             print('Esse campeonato não existe, se quer ter certeza que ele existe, então utilize o submenu 10')
         else:
-            dici['campeonatos'].remove(campeo)
-            with open('camps.json', 'w') as campeos:
-                json.dump(dici, campeos)
+            validar = input(f"Deseja MESMO deleter esse campeonato? Caso sim, digite DELETAR  e dê enter\n\nID: {campeo['id']}\nNome: {campeo['nome']}\nData de inicio: {campeo['data_inicio']}\nData de fim: {campeo['data_fim']}\nTime vencedor: {campeo['time_vencedor']}\nPlacar final: {campeo['placar_final']}\nArtilheira: {campeo['artilheira']}\nGols da artilheira: {campeo['gols_artilheira']}\nTimes participantes: {(campeo['times_participantes'])}\nEstado: {campeo['estado']}\n\n")
+            if validar.upper()=='DELETAR':
+                dici['campeonatos'].remove(campeo)
+                with open('camps.json', 'w') as campeos:
+                    json.dump(dici, campeos)
+            else:
+                print('Operação cancelada')
+    p()
 
 
 
@@ -570,7 +609,7 @@ def sub09():
                 if b.upper() == 'SIM':
                     dici['users'].remove(user)
                     with open('users.json', 'w') as usus:
-                        json.dump(dici, usus)
+                        json.dump(dici, usus, ident=2)
                 else:
                     print('Operação cancelada')
             else:
