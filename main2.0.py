@@ -1,6 +1,5 @@
 import random
 from datetime import date
-import datetime
 import json
 import os
 
@@ -104,19 +103,26 @@ def sub01():
                 DD1 = int(input('Diga o dia de nascimento (DD) \nEX:(17)\n'))
                 MM1 = int(input('Diga o mês de nascimento (MM) \nEX:(01)\n'))
                 AAAA1 = int(input('Diga o ano de nascimento (AAAA) \nEX:(1980)\n'))
-
+                if DD1<=9:
+                    DD1 = ('0'+str(DD1))
+                elif MM1<=9:
+                    MM1 = ('0'+str(MM1))
                 data = f'{AAAA1}-{MM1}-{DD1}'
             except ValueError:
                 print('Erro: Data inválida, data será considerada a mesma de hoje, arrume isso depois no submenu 4')
-                data = date.today()
+                data = str(date.today())
             try:
                 DD2 = int(input('Diga o dia de entrada (DD) \nEX:(18)\n'))
                 MM2 = int(input('Diga o mês de entrada (MM) \nEX:(02)\n'))
                 AAAA2 = int(input('Diga o ano de entrada (AAAA) \nEX:(2007)\n'))
+                if DD2<=9:
+                    DD2 = ('0'+str(DD2))    
+                elif MM2<=9:
+                    MM2 = ('0'+str(MM2))
                 entrada = f'{AAAA2}-{MM2}-{DD2}'
             except ValueError:
                 print('Erro: Data inválida, data será considerada a mesma de hoje, arrume isso depois no submenu 4')
-                entrada = date.today()
+                entrada = str(date.today())
             print(entrada)
             print(data)
             time = input('Diga o time da usuária\nEX: (Kansas City)')
@@ -142,6 +148,7 @@ def sub01():
                   "numero_camisa": numero,
                   "posicao": posicao
                 }
+                print(usuaria)
                 escritauser(usuaria)
             p()
             break
@@ -214,74 +221,110 @@ def sub04():
                 break
         if existe:
             anterior = user
-            b = input('Diga que dado deseja alterar \n(Números correspondentes aos dados: \n1 - Nome\n2 - Data de nascimento\n3 - Data de entrada\n4 - Time\n5 - Numero\n6 - Posição\nExemplos: Se o número de entrada for 1, você irá mudar o nome do user, se for 4, você irá mudar o time do user\nCaso não colocar nenhum dos tipos de dados citados ou escrever algo errado, consideraremos que não quer trocar nada e irá voltar ao menu principal\n')
+            while True:
+                b = input('Diga que dado deseja alterar \n(Números correspondentes aos dados: \n1 - Nome\n2 - Data de nascimento\n3 - Data de entrada\n4 - Time\n5 - Numero\n6 - Posição\nExemplos: Se o número de entrada for 1, você irá mudar o nome do user, se for 4, você irá mudar o time do user\nCaso não colocar nenhum dos tipos de dados citados ou escrever algo errado, perguntaremos qse não quer trocar nada e se quer ir ao menu principal\n')
+                opcoes = ['1','2','3','4','5,','6']
+                if b=="1":
+                    print(f"Nome atual: {user["nome"]}")
+                    c = input("Que nome novo deseja colocar no lugar?")
+                    user["nome"]=c
+                    print(f'Nome atualizado para {c}')
+                    dici["users"].remove(anterior)
+                    dici["users"].append(user)
+                    with open('users.json', 'w') as usus:
+                        json.dump(dici, usus, indent=2)
 
-            if b=="1":
-                print(f"Nome atual: {user["nome"]}")
-                c = input("Que nome novo deseja colocar no lugar?")
-                user["nome"]=c
-                print(f'Nome atualizado para {c}')
-                dici["users"].remove(anterior)
-                dici["users"].append(user)
-                with open('users.json', 'w') as usus:
-                    json.dump(dici, usus, indent=2)
+                elif b == "2":
+                    print(f"Data de nascimento atual: {user["data_nascimento"]}")
+                    try:
+                        DD1 = int(input('Diga o dia de nascimento (DD) \nEX:(17)\n'))
+                        MM1 = int(input('Diga o mês de nascimento (MM) \nEX:(01)\n'))
+                        AAAA1 = int(input('Diga o ano de nascimento (AAAA) \nEX:(1980)\n'))
+                        if DD1 <= 9:
+                            DD1 = ('0' + str(DD1))
+                        if MM1 <= 9:
+                            MM1 = ('0' + str(MM1))
+                        data = f'{AAAA1}-{MM1}-{DD1}'
+                        user["data_nascimento"] = data
 
-            elif b == "2":
-                print(f"Data de nascimento atual: {user["data_nascimento"]}")
-                c = input("Que data de nascimento novo deseja colocar no lugar?\n(Em formato AAAA-MM-DD\nEx: 2000-01-17)")
-                user["data_nascimento"] = c
-                print(f'Data de nascimento atualizada para {c}')
-                dici["users"].remove(anterior)
-                dici["users"].append(user)
-                with open('users.json', 'w') as usus:
-                    json.dump(dici, usus, indent=2)
+                        print(f'Data de nascimento atualizada para {data}')
+                        dici["users"].remove(anterior)
+                        dici["users"].append(user)
+                        with open('users.json', 'w') as usus:
+                            json.dump(dici, usus, indent=2)
+                    except ValueError:
+                        print(
+                            'Erro: Data inválida, coloque apenas NÚMEROS INTEIROS')
 
-            elif b == "3":
-                print(f"Data de entrada atual: {user["dia_entrada"]}")
-                c = input("Que data de entrada nova deseja colocar no lugar?\n(Em formato AAAA-MM-DD\nEx: 2025-10-24)")
-                user["dia_entrada"] = c
-                print(f'Data de entrada atualizada para {c}')
-                dici["users"].remove(anterior)
-                dici["users"].append(user)
-                with open('users.json', 'w') as usus:
-                    json.dump(dici, usus, indent=2)
+                elif b == "3":
+                    print(f"Data de entrada atual: {user["dia_entrada"]}")
+                    try:
+                        DD1 = int(input('Diga o dia de entrada (DD) \nEX:(17)\n'))
+                        MM1 = int(input('Diga o mês de entrada (MM) \nEX:(01)\n'))
+                        AAAA1 = int(input('Diga o ano de entrada (AAAA) \nEX:(1980)\n'))
+                        if DD1 <= 9:
+                            DD1 = ('0' + str(DD1))
+                        if MM1 <= 9:
+                            MM1 = ('0' + str(MM1))
+                        data = f'{AAAA1}-{MM1}-{DD1}'
 
-            elif b == "4":
-                print(f"Time atual: {user["time"]}")
-                c = input("Que time novo deseja colocar no lugar?")
-                user["time"] = c
-                print(f'Time atualizado para {c}')
-                dici["users"].remove(anterior)
-                dici["users"].append(user)
-                with open('users.json', 'w') as usus:
-                    json.dump(dici, usus, indent=2)
+                        user["dia_entrada"] = data
+                        print(f'Data de entrada atualizada para {data}')
 
-            elif b == "5":
-                print(f"Camisa atual: {user["numero_camisa"]}")
-                c = input("Que número de camisa novo deseja colocar no lugar?")
-                user["numero_camisa"] = c
-                print(f'Numero de camisa atualizado para {c}')
-                dici["users"].remove(anterior)
-                dici["users"].append(user)
-                with open('users.json', 'w') as usus:
-                    json.dump(dici, usus, indent=2)
+                        dici["users"].remove(anterior)
+                        dici["users"].append(user)
+                        with open('users.json', 'w') as usus:
+                            json.dump(dici, usus, indent=2)
+                    except ValueError:
+                        print(
+                            'Erro: Data inválida, coloque apenas NÚMEROS INTEIROS')
 
-            elif b == "6":
-                print(f"Posição atual: {user["posicao"]}")
-                c = input("Que posição nova deseja colocar no lugar?")
-                user["posicao"] = c
-                print(f'Posição atualizada para {c}')
-                dici["users"].remove(anterior)
-                dici["users"].append(user)
-                with open('users.json', 'w') as usus:
-                    json.dump(dici, usus, indent=2)
 
-            else:
-                p()
+                elif b == "4":
+                    print(f"Time atual: {user["time"]}")
+                    c = input("Que time novo deseja colocar no lugar?")
+                    user["time"] = c
+                    print(f'Time atualizado para {c}')
+                    dici["users"].remove(anterior)
+                    dici["users"].append(user)
+                    with open('users.json', 'w') as usus:
+                        json.dump(dici, usus, indent=2)
 
+                elif b == "5":
+                    print(f"Camisa atual: {user["numero_camisa"]}")
+                    try:
+                        c = input("Que número de camisa novo deseja colocar no lugar?")
+                        user["numero_camisa"] = c
+                        print(f'Numero de camisa atualizado para {c}')
+                        dici["users"].remove(anterior)
+                        dici["users"].append(user)
+                        with open('users.json', 'w') as usus:
+                            json.dump(dici, usus, indent=2)
+                    except ValueError:
+                        print('Erro: Coloque números inteiros apenas')
+
+
+                elif b == "6":
+                    print(f"Posição atual: {user["posicao"]}")
+                    c = input("Que posição nova deseja colocar no lugar?")
+                    user["posicao"] = c
+                    print(f'Posição atualizada para {c}')
+                    dici["users"].remove(anterior)
+                    dici["users"].append(user)
+                    with open('users.json', 'w') as usus:
+                        json.dump(dici, usus, indent=2)
+
+                else:
+                    m = input('Deseja parar de editar? Se sim, digite "SAIR" ')
+                    if m.upper() == "SAIR":
+                        break
+                if b in opcoes:
+                    m = input('Deseja parar de editar? Se sim, digite "SAIR" ')
+                    if m.upper() == "SAIR":
+                        break
         else:
             print('Este número de registro não está na listagem, tem certeza que essa pessoa existe?\nSe sim, use a opção 3 do menu principal e coloque o número de registro para ver se esse usuário realmente existe')
-            p()
+    p()
 
 def sub05():
     """
@@ -300,9 +343,9 @@ def sub05():
                 DD1 = int(input('Diga o dia de nascimento (DD) \nEX:(17)\n'))
                 MM1 = int(input('Diga o mês de nascimento (MM) \nEX:(01)\n'))
                 AAAA1 = int(input('Diga o ano de nascimento (AAAA) \nEX:(1980)\n'))
-                if DD1<=1:
+                if DD1<=9:
                     DD1 = ('0'+str(DD1))
-                elif MM1<=1:
+                elif MM1<=9:
                     MM1 = ('0'+str(AAAA1))
 
                 data1 = f'{AAAA1}-{MM1}-{DD1}'
@@ -315,14 +358,14 @@ def sub05():
                 AAAA2 = int(input('Diga o ano de entrada (AAAA) \nEX:(2007)\n'))
                 if DD2<=9:
                     DD2 = ('0'+str(DD2))
-                elif MM2<=1:
+                elif MM2<=9:
                     MM2 = ('0'+str(MM2))
                 data2 = f'{AAAA2}-{MM2}-{DD2}'
             except ValueError:
                 print('Erro: Data inválida, data será considerada a mesma de hoje, arrume isso depois no submenu 7')
                 data2 = str(date.today())
             datatual = str(date.today())
-            if not datatual<data2:
+            if not datatual<=data2:
                 estado ='terminado'
             else:
                 estado = 'a ocorrer'
@@ -358,16 +401,19 @@ def sub05():
             while True:
                 time = input('Quais são os timpes participantes?\nDIGITE "SAIR" QUANTO NÃO TIVER MAIS TIMES PARA ADICIONAR\n')
                 if time.upper()=='SAIR':
-                    if not len(times1)<=1:
-                        break
-                    elif not len(times1)%2==1:
-                        print('Quantidade de times é impar, com coloque mais um time por favor')
+                    if len(times1)<=1:
+                        print('Por favor, coloque mais de um time\n\n')
+                    elif len(times1)%2==1:
+                        print('Quantidade de times é impar, com coloque mais um time por favor\n\n')
                     else:
-                        print('Por favor, coloque mais de um time')
-                times1.append(time)
+                        break
+                else:
+                    times1.append(time)
+
             times2 = ''
             for i in times1:
                 times2+=i+', ' #Variável criada apenas para valor estético que será utilizado quando printar as informações
+
             while True:
                 exis = False
                 id = str(random.randint(1000,9999))
@@ -377,6 +423,8 @@ def sub05():
                             exis = True
                     if not exis:
                         break
+                else:
+                    break
             campeo ={
               "id": id,
               "nome": nome,
@@ -412,20 +460,19 @@ def sub06():
     else:
         dici = econtrarcamp()
         camps = dici['campeonatos']
-        try:
-            a = int(input('Digite o ID do campeonato\n'))
-            achou = False
-            for i in camps:
-                if i['id']==a:
-                    achou = True
-                    campeo = i
-                    break
-            if not achou:
-                print('Esse campeonato não existe, se quer ter certeza que ele existe, então utilize o submenu 10')
-            else:
-                print(f'\nID: {campeo['id']}\nNome: {campeo['nome']}\nData de inicio: {campeo['data_inicio']}\nData de fim: {campeo['data_fim']}\nTime vencedor: {campeo['time_vencedor']}\nPlacar final: {campeo['placar_final']}\nArtilheira: {campeo['artilheira']}\nGols da artilheira: {campeo['gols_artilheira']}\nTimes participantes: {(campeo['times_participantes'])}\nEstado: {campeo['estado']}\n\nCaso não, digite "RECOMEÇAR" para fazer outro')
-        except ValueError:
-            print('Coloque um número')
+
+        a = input('Digite o ID do campeonato\n')
+        achou = False
+        for i in camps:
+            if i['id']==a:
+                achou = True
+                campeo = i
+                break
+        if not achou:
+            print('Esse campeonato não existe, se quer ter certeza que ele existe, então utilize o submenu 10')
+        else:
+            print(f'\nID: {campeo['id']}\nNome: {campeo['nome']}\nData de inicio: {campeo['data_inicio']}\nData de fim: {campeo['data_fim']}\nTime vencedor: {campeo['time_vencedor']}\nPlacar final: {campeo['placar_final']}\nArtilheira: {campeo['artilheira']}\nGols da artilheira: {campeo['gols_artilheira']}\nTimes participantes: {(campeo['times_participantes'])}\nEstado: {campeo['estado']}\n\n')
+
     p()
 
 def sub07():
@@ -438,7 +485,6 @@ def sub07():
     if m.upper() == 'SAIR':
         pass
     else:
-        while True:
             dici = econtrarcamp()
             camps = dici['campeonatos']
             achou = False
@@ -452,100 +498,136 @@ def sub07():
                     campeo = i
             if not achou:
                 print('Esse campeonato não existe, se quer ter certeza que ele existe, então utilize o submenu 10')
+
             else:
-                estadoantigo = campeo
-                a = input(f'Que informação você gostaria de modificar?\n1 - Nome\n2 - Data de inicio\n3 - Data Final\n4 - Time vencedor\n5 - Placar final\n6 - Artilheira\n7 - Gols de artilheira\n8 - Times participantes\n 9 - Estado do campeonato')
-                if a == '1':
-                    print(f'Nome antigo:{campeo['nome']}')
-                    b = input('Qual é o nome novo?\n')
-                    print(f'Novo novo colocado: {b}')
-                    campeo['nome'] = b
-                elif a == '2':
-                    print(f'Data antiga:{campeo['data_inicio']}')
-                    b = input('Qual é a data inicial nova??\n')
-                    print(f'Nova data colocada: {b}')
-                    campeo['data_inicio'] = b
-                elif a=='3':
-                    print(f'Data antiga:{campeo['data_fim']}')
-                    b = input('Qual é a data final nova??\n')
-                    print(f'Nova data colocado: {b}')
-                    campeo['data_fim'] = b
-                elif a=='4':
-                    print(f'Vencedor antigo:{campeo['time_vencedor']}')
-                    b = input('Qual é o time vencedor novo?\n')
-                    print(f'Novo time vencedor colocado: {b}')
-                    campeo['time_vencedor'] = b
-                elif a=='5':
-                    print(f'Placar final antigo:{campeo['placar_final']}')
-                    b1 = input('Quantos gols o primeiro time fez?\n')
-                    b2 = input('Quantos gols o segundo time fez?')
-                    c = f'{b1}-{b2}'
-                    print(f'Novo placar final colocado: {c}')
-                    campeo['placar_final'] = c
-                elif a=='6':
-                    print(f'Artilheira antiga:{campeo['artilheira']}')
-                    b = input('Qual é a nova artilheira?\n')
-                    print(f'Nova artilheira colocada: {b}')
-                    campeo['artilheira'] = b
-                elif a=='7':
-                    print(f'Gols de artilheira antigo:{campeo['gols_artilheira']}')
-                    while True:
+                while True:
+                    estadoantigo = campeo
+                    a = input(f'Que informação você gostaria de modificar?\n1 - Nome\n2 - Data de inicio\n3 - Data Final\n4 - Time vencedor\n5 - Placar final\n6 - Artilheira\n7 - Gols de artilheira\n8 - Times participantes\n 9 - Estado do campeonato')
+
+                    if a == '1':
+                        print(f'Nome antigo:{campeo['nome']}')
+                        b = input('Qual é o nome novo?\n')
+                        print(f'Novo novo colocado: {b}')
+                        campeo['nome'] = b
+                    elif a == '2':
+                        print(f'Data antiga:{campeo['data_inicio']}')
+
+                        try:
+                            DD1 = int(input('Diga o dia de inicio (DD) \nEX:(17)\n'))
+                            MM1 = int(input('Diga o mês de inicio (MM) \nEX:(01)\n'))
+                            AAAA1 = int(input('Diga o ano de inicio (AAAA) \nEX:(1980)\n'))
+                            if DD1 <= 9:
+                                DD1 = ('0' + str(DD1))
+                            if MM1 <= 9:
+                                MM1 = ('0' + str(MM1))
+                            data1 = f'{AAAA1}-{MM1}-{DD1}'
+                            print(f'Nova data colocada: {data1}')
+                            campeo['data_inicio'] = data1
+                        except ValueError:
+                            print(
+                                'Erro: Data inválida')
+
+
+                    elif a=='3':
+                        print(f'Data antiga:{campeo['data_fim']}')
+                        try:
+                            DD1 = int(input('Diga o dia de inicio (DD) \nEX:(17)\n'))
+                            MM1 = int(input('Diga o mês de inicio (MM) \nEX:(01)\n'))
+                            AAAA1 = int(input('Diga o ano de inicio (AAAA) \nEX:(1980)\n'))
+                            if DD1 <= 9:
+                                DD1 = ('0' + str(DD1))
+                            if MM1 <= 9:
+                                MM1 = ('0' + str(MM1))
+                            data1 = f'{AAAA1}-{MM1}-{DD1}'
+                            campeo['data_fim'] = data1
+                        except ValueError:
+                            print(
+                                'Erro: Data inválida')
+
+                    elif a=='4':
+                        print(f'Vencedor antigo:{campeo['time_vencedor']}')
+                        b = input('Qual é o time vencedor novo?\n')
+                        print(f'Novo time vencedor colocado: {b}')
+                        campeo['time_vencedor'] = b
+
+                    elif a=='5':
+                        print(f'Placar final antigo:{campeo['placar_final']}')
+                        try:
+                            b1 = int(input('Quantos gols o primeiro time fez?\n'))
+                            b2 = int(input('Quantos gols o segundo time fez?'))
+                            c = f'{b1}-{b2}'
+                            print(f'Novo placar final colocado: {c}')
+                            campeo['placar_final'] = c
+                        except ValueError:
+                            print('Erro: Coloque apenas números inteiros')
+
+                    elif a=='6':
+                        print(f'Artilheira antiga:{campeo['artilheira']}')
+                        b = input('Qual é a nova artilheira?\n')
+                        print(f'Nova artilheira colocada: {b}')
+                        campeo['artilheira'] = b
+
+                    elif a=='7':
+                        print(f'Gols de artilheira antigo:{campeo['gols_artilheira']}')
                         try:
                             b = int(input('Qual são os novos gols de artilheira?\n'))
-                            break
+                            print(f'Novos gols: {b}')
+                            campeo['gols_artilheira'] = b
+
                         except ValueError:
                             print('Números inteiros apenas')
-                    print(f'Novos gols: {b}')
-                    campeo['gols_artilheira'] = b
-                elif a=='8':
-                    times = campeo['times_participantes']
-                    print(f'Time: {times}')
-                    b = input('O que deseja?\n1 - Adicionar time\n2 - Excluir time\n3 - Editar time')
-                    if b=='1':
-                        c = input('Nome do time?\n')
-                        campeo['times_participantes'].append(c)
-                    elif b=='2':
-                        for i in times:
-                            print(i)
-                        c = input('Qual desses times você deseja excluir?')
-                        if not c in times:
-                            print('Esse time não existe')
-                        else:
-                          campeo['times_participantes'].pop(times.index(c))
-                    elif b=='3':
-                        for i in times:
-                            print(i)
-                        c = input('Qual desses times você deseja modificar?')
-                        if not c in times:
-                            print('Esse time não existe')
-                        else:
-                            d = input(f'O que deseja colocar no lugar do item {c}?')
-                            campeo['times_participantes'].append(d)
-                            campeo['times_participantes'].pop(times.index(c))
 
-                    else:
-                        print('Essa opção não existe')
-                elif a=='9':
-                    print(f'Estado antigo:{campeo['estado']}')
-                    b = input('Opções de novos estados:\n1 - A ocorrer\n2 - Terminado\n3 - Cancelado\n')
-                    if b=='1':
-                        campeo['estado']='a ocorrer'
-                    elif b=='2':
-                        campeo['estado']='terminado'
-                    elif b=='3':
-                        campeo['estado']='cancelado'
-                    else:
-                        print('Essa opção não existe')
-                    
-            print(
-                f'\nID: {campeo['id']}\nNome: {campeo['nome']}\nData de inicio: {campeo['data_inicio']}\nData de fim: {campeo['data_fim']}\nTime vencedor: {campeo['time_vencedor']}\nPlacar final: {campeo['placar_final']}\nArtilheira: {campeo['artilheira']}\nGols da artilheira: {campeo['gols_artilheira']}\nTimes participantes: {(campeo['times_participantes'])}\nEstado: {campeo['estado']}\n\nCaso não, digite "RECOMEÇAR" para fazer outro')
-            dici['campeonatos'].remove(estadoantigo)
-            dici['campeonatos'].append(campeo)
-            with open('camps.json', 'w') as campeos:
-                json.dump(dici, campeos, ident=2)
-            m = input('Se deseja voltar ao menu, digite "VOLTAR"\nSe quiser continuan editando, dê apenas enter')
-            if m.upper()=='VOLTAR':
-                break
+
+                    elif a=='8':
+                        times = campeo['times_participantes']
+                        print(f'Time: {times}')
+                        b = input('O que deseja?\n1 - Adicionar time\n2 - Excluir time\n3 - Editar time\n')
+                        if b=='1':
+                            c = input('Nome do time?\n')
+                            campeo['times_participantes'].append(c)
+                        elif b=='2':
+                            for i in times:
+                                print(i)
+                            c = input('Qual desses times você deseja excluir?\n')
+                            if not c in times:
+                                print('Esse time não existe')
+                            else:
+                              campeo['times_participantes'].pop(times.index(c))
+                        elif b=='3':
+                            for i in times:
+                                print(i)
+                            c = input('Qual desses times você deseja modificar?\n')
+                            if not c in times:
+                                print('Esse time não existe')
+                            else:
+                                d = input(f'O que deseja colocar no lugar do item {c}?')
+                                campeo['times_participantes'].append(d)
+                                campeo['times_participantes'].pop(times.index(c))
+
+                        else:
+                            print('Essa opção não existe')
+
+                    elif a=='9':
+                        print(f'Estado antigo:{campeo['estado']}')
+                        b = input('Opções de novos estados:\n1 - A ocorrer\n2 - Terminado\n3 - Cancelado\n')
+                        if b=='1':
+                            campeo['estado']='a ocorrer'
+                        elif b=='2':
+                            campeo['estado']='terminado'
+                        elif b=='3':
+                            campeo['estado']='cancelado'
+                        else:
+                            print('Essa opção não existe')
+
+                    print(
+                        f'\nID: {campeo['id']}\nNome: {campeo['nome']}\nData de inicio: {campeo['data_inicio']}\nData de fim: {campeo['data_fim']}\nTime vencedor: {campeo['time_vencedor']}\nPlacar final: {campeo['placar_final']}\nArtilheira: {campeo['artilheira']}\nGols da artilheira: {campeo['gols_artilheira']}\nTimes participantes: {(campeo['times_participantes'])}\nEstado: {campeo['estado']}\n\n')
+                    dici['campeonatos'].remove(estadoantigo)
+                    dici['campeonatos'].append(campeo)
+                    with open('camps.json', 'w') as campeos:
+                        json.dump(dici, campeos, indent=2)
+                    m = input('Se deseja voltar ao menu, digite "VOLTAR"\nSe quiser continuar editando, dê apenas enter\n')
+                    if m.upper()=='VOLTAR':
+                        break
     p()
 
 def sub08():
@@ -575,13 +657,13 @@ def sub08():
         if not achou:
             print('Esse campeonato não existe, se quer ter certeza que ele existe, então utilize o submenu 10')
         else:
-            validar = input(f"Deseja MESMO deleter esse campeonato? Caso sim, digite DELETAR  e dê enter\n\nID: {campeo['id']}\nNome: {campeo['nome']}\nData de inicio: {campeo['data_inicio']}\nData de fim: {campeo['data_fim']}\nTime vencedor: {campeo['time_vencedor']}\nPlacar final: {campeo['placar_final']}\nArtilheira: {campeo['artilheira']}\nGols da artilheira: {campeo['gols_artilheira']}\nTimes participantes: {(campeo['times_participantes'])}\nEstado: {campeo['estado']}\n\n")
+            validar = input(f"\n\nID: {campeo['id']}\nNome: {campeo['nome']}\nData de inicio: {campeo['data_inicio']}\nData de fim: {campeo['data_fim']}\nTime vencedor: {campeo['time_vencedor']}\nPlacar final: {campeo['placar_final']}\nArtilheira: {campeo['artilheira']}\nGols da artilheira: {campeo['gols_artilheira']}\nTimes participantes: {(campeo['times_participantes'])}\nEstado: {campeo['estado']}\n\nDeseja MESMO deleter esse campeonato? Caso sim, digite DELETAR  e dê enter\n")
             if validar.upper()=='DELETAR':
                 dici['campeonatos'].remove(campeo)
                 with open('camps.json', 'w') as campeos:
-                    json.dump(dici, campeos)
+                    json.dump(dici, campeos, indent=2)
             else:
-                print('Operação cancelada')
+                print('Operação cancelada\n')
     p()
 
 
@@ -598,7 +680,7 @@ def sub09():
     else:
         dici = encontraruser()
         users = dici['users']
-        a = input('Diga o número de registro da jogadora a ser deletada')
+        a = input('Diga o número de registro da jogadora a ser deletada\n')
         existe = False
         for i in users:
             if i['RM']==a:
@@ -609,11 +691,11 @@ def sub09():
                 if b.upper() == 'SIM':
                     dici['users'].remove(user)
                     with open('users.json', 'w') as usus:
-                        json.dump(dici, usus, ident=2)
+                        json.dump(dici, usus, indent=2)
                 else:
-                    print('Operação cancelada')
+                    print('Operação cancelada\n')
             else:
-                print('Essa usuária não existe')
+                print('Essa usuária não existe\n')
     p()
 
 
